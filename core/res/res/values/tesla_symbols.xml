@@ -154,6 +154,17 @@
   <!-- On-The-Go -->
   <java-symbol type="string" name="global_action_onthego" />
   <java-symbol type="drawable" name="ic_lock_onthego" />
-  <java-symbol type="drawable" name="ic_lock_onthego_alpha" /> 
+  <java-symbol type="drawable" name="ic_lock_onthego_alpha" />
+
+  <!-- App-Ops -->
+  <java-symbol type="id" name="permission_text" />
+  <java-symbol type="id" name="permission_remember_layout" />
+  <java-symbol type="id" name="permission_remember_choice_checkbox" />
+  <java-symbol type="id" name="permission_remember_choice_text" />
+  <java-symbol type="string" name="allow" />
+  <java-symbol type="string" name="deny" />
+  <java-symbol type="string" name="permission" />
+  <java-symbol type="layout" name="permission_confirmation_dialog" />
+  <java-symbol type="array" name="app_ops_labels" />
 
 </resources>
