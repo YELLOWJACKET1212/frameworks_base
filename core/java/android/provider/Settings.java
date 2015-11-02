@@ -4796,7 +4796,14 @@ public final class Settings {
         public static final String ANIMATION_IME_DURATION = "animation_ime_duration";
 
         /**
-         *
+        * Whether volume control media sound stream
+        * @hide
+        */
+        public static final String VOLUME_KEY_CONTROL_MEDIA =
+                "volume_key_control_media";
+
+         /**
+         * Whether to show the IME switcher in the navigation bar
          * @hide
          */
         public static final String ANIMATION_IME_ENTER = "animation_ime_enter";
