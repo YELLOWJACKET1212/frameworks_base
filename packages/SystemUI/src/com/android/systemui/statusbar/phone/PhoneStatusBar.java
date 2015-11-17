@@ -114,6 +114,8 @@ import android.widget.TextView;
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.statusbar.NotificationVisibility;
 import com.android.internal.statusbar.StatusBarIcon;
+import com.android.internal.util.tesla.StatusBarColorHelper;
+import com.android.internal.util.tesla.GreetingTextHelper;
 import com.android.internal.util.du.WeatherControllerImpl;
 import com.android.keyguard.KeyguardHostView.OnDismissAction;
 import com.android.keyguard.KeyguardUpdateMonitor;
@@ -446,6 +448,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CUSTOM_HEADER_SHADOW),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_SHOW_GREETING),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_CUSTOM_TEXT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT),
+                    false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_COLOR),
+                    false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -461,6 +475,18 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         mBatterySaverWarningColor = mContext.getResources()
                                 .getColor(com.android.internal.R.color.battery_saver_mode_color);
                     }
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_SHOW_GREETING))) {
+                updateShowGreeting();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_CUSTOM_TEXT))) {
+                updateGreetingText();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_TIMEOUT))) {
+                updateGreetingTimeout();
+            } else if (uri.equals(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_GREETING_COLOR))) {
+                updateGreetingColor();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.USE_SLIM_RECENTS))) {
                 updateRecents();
@@ -480,6 +506,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mTeslaLogoColor = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_TESLA_LOGO_COLOR, 0xFFFFFFFF, mCurrentUserId);
             showTeslaLogo(mTeslaLogo, mTeslaLogoColor);
+
+            updateShowGreeting();
+            updateGreetingText();
+            updateGreetingTimeout();
+            updateGreetingColor();
+
         }
     }
 
@@ -1118,6 +1150,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED);
+        filter.addAction("com.android.settings.SHOW_GREETING_PREVIEW");
         context.registerReceiverAsUser(mBroadcastReceiver, UserHandle.ALL, filter, null, null);
 
         IntentFilter demoFilter = new IntentFilter();
@@ -2014,6 +2047,41 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     }
                 }
             }
+        }
+    }
+
+    private void updateShowGreeting() {
+        final int showGreeting = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_SHOW_GREETING, 1);
+        if (mIconController != null) {
+            mIconController.updateShowGreeting(showGreeting);
+        }
+    }
+
+    private void updateGreetingText() {
+        String greetingText = Settings.System.getString(
+                mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_CUSTOM_TEXT);
+
+        if (greetingText == null || greetingText.isEmpty()) {
+            greetingText = GreetingTextHelper.getDefaultGreetingText(mContext);
+        }
+        if (mIconController != null) {
+            mIconController.updateGreetingText(greetingText);
+        }
+    }
+
+    private void updateGreetingTimeout() {
+        final int greetingTimeout = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.STATUS_BAR_GREETING_TIMEOUT, 400);
+        if (mIconController != null) {
+            mIconController.updateGreetingTimeout(greetingTimeout);
+        }
+    }
+
+    private void updateGreetingColor() {
+        if (mIconController != null) {
+            mIconController.updateGreetingColor();
         }
     }
 
@@ -3241,6 +3309,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             }
             else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                if (mIconController != null) {
+                    mIconController.resetHideGreeting();
+                }
                 notifyNavigationBarScreenOn(false);
                 notifyHeadsUpScreenOff();
                 finishBarAnimations();
@@ -3276,6 +3347,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 }
             } else if (Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED.equals(action)) {
                 updateMediaMetaData(true);
+            }
+            else if (action.equals("com.android.settings.SHOW_GREETING_PREVIEW")) {
+                if (mIconController != null) {
+                    mIconController.showGreeting(true);
+                }
             }
         }
     };
