@@ -208,4 +208,7 @@
   <java-symbol type="id" name="shutdown_logo_shadow" />
   <java-symbol type="id" name="shutdown_message" />
 
+  <!-- Greeting -->
+  <java-symbol type="string" name="default_greeting_welcome" />
+
 </resources>
