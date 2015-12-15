@@ -3630,9 +3630,16 @@ status_t ResTable::add(ResTable* src)
 }
 
 status_t ResTable::addEmpty(const int32_t cookie) {
+    int32_t realCookie = cookie < 0 ? nextAvailableCookie() : cookie;
+
+    if (cookieToHeaderIndex(realCookie) >= 0) {
+        ALOGE("cookie %d already added to table", realCookie);
+        return BAD_VALUE;
+    }
+
     Header* header = new Header(this);
     header->index = mHeaders.size();
-    header->cookie = cookie;
+    header->cookie = realCookie;
     header->values.setToEmpty();
     header->ownedData = calloc(1, sizeof(ResTable_header));
 
@@ -3647,7 +3654,7 @@ status_t ResTable::addEmpty(const int32_t cookie) {
 }
 
 status_t ResTable::addInternal(const void* data, size_t dataSize, const void* idmapData, size_t idmapDataSize,
-        const int32_t cookie, bool copyData)
+        int32_t cookie, bool copyData)
 {
     if (!data) {
         return NO_ERROR;
@@ -3657,6 +3664,15 @@ status_t ResTable::addInternal(const void* data, size_t dataSize, const void* id
         ALOGE("Invalid data. Size(%d) is smaller than a ResTable_header(%d).",
                 (int) dataSize, (int) sizeof(ResTable_header));
         return UNKNOWN_ERROR;
+    }
+
+    if (cookie < 0) {
+        cookie = nextAvailableCookie();
+    }
+
+    if (cookieToHeaderIndex(cookie) >= 0) {
+        ALOGE("cookie %d already added to table", cookie);
+        return BAD_VALUE;
     }
 
     Header* header = new Header(this);
@@ -3777,6 +3793,19 @@ status_t ResTable::addInternal(const void* data, size_t dataSize, const void* id
         ALOGV("Returning from add with mError=%d\n", mError);
     }
     return mError;
+}
+
+int32_t ResTable::nextAvailableCookie() const
+{
+    int32_t candidate = 1;
+    const size_t N = mHeaders.size();
+    for (size_t i = 0; i < N; i++) {
+        const int32_t cookie = mHeaders[i]->cookie;
+        if (cookie >= candidate) {
+            candidate = cookie + 1;
+        }
+    }
+    return candidate;
 }
 
 status_t ResTable::getError() const
@@ -5661,6 +5690,21 @@ const DynamicRefTable* ResTable::getDynamicRefTableForCookie(int32_t cookie) con
         }
     }
     return NULL;
+}
+
+ssize_t ResTable::cookieToHeaderIndex(int32_t cookie) const
+{
+    if (cookie < 0) {
+        return -1;
+    }
+
+    const size_t N = mHeaders.size();
+    for (size_t i = 0; i < N; i++) {
+        if (mHeaders[i]->cookie == cookie) {
+            return mHeaders[i]->index;
+        }
+    }
+    return -1;
 }
 
 void ResTable::getConfigurations(Vector<ResTable_config>* configs, bool ignoreMipmap) const
