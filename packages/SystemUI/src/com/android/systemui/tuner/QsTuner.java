@@ -219,6 +219,7 @@ public class QsTuner extends Fragment implements Callback {
         else if (spec.equals("volume")) return R.string.quick_settings_volume_panel_label;
         else if (spec.equals("kernel")) return R.string.quick_settings_kernel_adiutor_label;
         else if (spec.equals("tesla")) return R.string.quick_settings_teslacoil;
+        else if (spec.equals("screenrecord")) return R.string.quick_settings_screenrecord_label;
         return 0;
     }
 
@@ -477,6 +478,7 @@ public class QsTuner extends Fragment implements Callback {
             else if (mSpec.equals("volume")) return R.drawable.ic_qs_volume_panel;
             else if (mSpec.equals("kernel")) return R.drawable.ic_qs_kernel;
             else if (mSpec.equals("tesla")) return R.drawable.ic_qs_teslacoil;
+            else if (mSpec.equals("screenrecord")) return R.drawable.ic_qs_screenrecord;
             return R.drawable.android;
         }
 
