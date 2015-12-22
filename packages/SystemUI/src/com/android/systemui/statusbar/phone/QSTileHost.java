@@ -45,6 +45,7 @@ import com.android.systemui.qs.tiles.KernelAdiutorTile;
 import com.android.systemui.qs.tiles.LayersManagerTile;
 import com.android.systemui.qs.tiles.LocationTile;
 import com.android.systemui.qs.tiles.MusicTile;
+import com.android.systemui.qs.tiles.NavBarTile;
 import com.android.systemui.qs.tiles.NfcTile;
 import com.android.systemui.qs.tiles.RebootTile;
 import com.android.systemui.qs.tiles.RotationLockTile;
@@ -296,6 +297,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (tileSpec.equals("kernel")) return new KernelAdiutorTile(this);
         else if (tileSpec.equals("tesla")) return new TeslaCoilTile(this);
         else if (tileSpec.equals("screenrecord")) return new ScreenrecordTile(this);
+        else if (tileSpec.equals("navbar")) return new NavBarTile(this);
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
         else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
     }
