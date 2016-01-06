@@ -163,4 +163,7 @@
     <!-- Content description of the KernelAdiutor tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_kernel_adiutor">Kernel.</string>
 
+    <!-- TeslaCoil Tile -->
+    <string name="quick_settings_teslacoil">TeslaCoil</string>
+
 </resources>
