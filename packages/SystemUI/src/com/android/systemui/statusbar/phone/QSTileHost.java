@@ -53,6 +53,7 @@ import com.android.systemui.qs.tiles.UsbTetherTile;
 import com.android.systemui.qs.tiles.ScreenOffTile;
 import com.android.systemui.qs.tiles.SyncTile;
 import com.android.systemui.qs.tiles.ScreenTimeoutTile;
+import com.android.systemui.qs.tiles.TeslaCoilTile;
 import com.android.systemui.qs.tiles.VolumeTile;
 import com.android.systemui.qs.tiles.WifiTile;
 import com.android.systemui.statusbar.policy.BluetoothController;
@@ -292,6 +293,7 @@ public class QSTileHost implements QSTile.Host, Tunable {
         else if (tileSpec.equals("layers")) return new LayersManagerTile(this);
         else if (tileSpec.equals("volume")) return new VolumeTile(this);
         else if (tileSpec.equals("kernel")) return new KernelAdiutorTile(this);
+        else if (tileSpec.equals("tesla")) return new TeslaCoilTile(this);
         else if (tileSpec.startsWith(IntentTile.PREFIX)) return IntentTile.create(this,tileSpec);
         else throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
     }

@@ -216,6 +216,7 @@ public class QsTuner extends Fragment implements Callback {
         else if (spec.equals("layers")) return R.string.quick_settings_layers_manager_label;
         else if (spec.equals("volume")) return R.string.quick_settings_volume_panel_label;
         else if (spec.equals("kernel")) return R.string.quick_settings_kernel_adiutor_label;
+        else if (spec.equals("tesla")) return R.string.quick_settings_teslacoil;
         return 0;
     }
 
@@ -471,6 +472,7 @@ public class QsTuner extends Fragment implements Callback {
             else if (mSpec.equals("layers")) return R.drawable.ic_qs_layers_manager;
             else if (mSpec.equals("volume")) return R.drawable.ic_qs_volume_panel;
             else if (mSpec.equals("kernel")) return R.drawable.ic_qs_kernel;
+            else if (mSpec.equals("tesla")) return R.drawable.ic_qs_teslacoil;
             return R.drawable.android;
         }
 
