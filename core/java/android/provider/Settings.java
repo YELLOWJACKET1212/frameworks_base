@@ -4462,6 +4462,12 @@ public final class Settings {
         public static final String ENABLE_APP_CIRCLE_BAR = "enable_app_circle_bar";
 
         /**
+         * Settings for clock font size
+         * @hide
+         */
+        public static final String STATUSBAR_CLOCK_FONT_SIZE = "statusbar_clock_font_size";
+
+        /**
          * A list of packages to include in app circle bar.
          * This should be a string of packages separated by |
          * @hide
