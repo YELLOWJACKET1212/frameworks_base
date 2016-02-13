@@ -234,8 +234,8 @@ public class NotificationPanelView extends PanelView implements
     private final Interpolator mTouchResponseInterpolator =
             new PathInterpolator(0.3f, 0f, 0.1f, 1f);
 
-    // QS alpha
     private int mQSShadeAlpha;
+    private int mQsSmartPullDown;
 
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -804,6 +804,7 @@ public class NotificationPanelView extends PanelView implements
                 && mQsExpansionEnabled) {
             mTwoFingerQsExpandPossible = true;
         }
+
         if (mTwoFingerQsExpandPossible && isOpenQsEvent(event)
                 && event.getY(event.getActionIndex()) < mStatusBarMinHeight) {
             MetricsLogger.count(mContext, COUNTER_PANEL_OPEN_QS, 1);
@@ -827,9 +828,18 @@ public class NotificationPanelView extends PanelView implements
         final int pointerCount = event.getPointerCount();
         final int action = event.getActionMasked();
 
+        final boolean quickPullDown =
+                mOneFingerQuickSettingsInterceptMode > ONE_FINGER_QS_INTERCEPT_OFF
+                && shouldQuickSettingsIntercept(event.getX(), event.getY(), -1, false);
+
+        final boolean smartPullDown =
+                    (mQsSmartPullDown == 1 && !mStatusBar.hasActiveClearableNotifications())
+                 || (mQsSmartPullDown == 2 && !mStatusBar.hasActiveVisibleNotifications()  )
+                 || (mQsSmartPullDown == 3 && !mStatusBar.hasActiveVisibleNotifications()
+                                           && !mStatusBar.hasActiveClearableNotifications());
+
         final boolean oneFingerDrag = action == MotionEvent.ACTION_DOWN
-                && mOneFingerQuickSettingsInterceptMode > ONE_FINGER_QS_INTERCEPT_OFF
-                && shouldQuickSettingsIntercept (event.getX(), event.getY(), -1, false);
+                && (quickPullDown || smartPullDown);
 
         final boolean twoFingerDrag = action == MotionEvent.ACTION_POINTER_DOWN
                 && pointerCount == 2;
@@ -1522,6 +1532,13 @@ public class NotificationPanelView extends PanelView implements
             showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x);
         } else if (mOneFingerQuickSettingsInterceptMode == ONE_FINGER_QS_INTERCEPT_START) {
             showQsOverride = isLayoutRtl() ? (w - region < x) : (x < region);
+        }
+
+        if ((mQsSmartPullDown == 1 && !mStatusBar.hasActiveClearableNotifications())
+                || (mQsSmartPullDown == 2 && !mStatusBar.hasActiveVisibleNotifications())
+                || (mQsSmartPullDown == 3 && !mStatusBar.hasActiveVisibleNotifications()
+                        && !mStatusBar.hasActiveClearableNotifications())) {
+            showQsOverride = true;
         }
 
         if (mQsExpanded) {
@@ -2517,6 +2534,8 @@ public class NotificationPanelView extends PanelView implements
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QS_TRANSPARENT_SHADE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.QS_SMART_PULLDOWN), false, this, UserHandle.USER_ALL);
             update();
         }
 
@@ -2543,6 +2562,8 @@ public class NotificationPanelView extends PanelView implements
             mQSShadeAlpha = Settings.System.getInt(
                     resolver, Settings.System.QS_TRANSPARENT_SHADE, 255);
             setQSBackgroundAlpha();
+            mQsSmartPullDown = Settings.System.getIntForUser(
+                    resolver, Settings.System.QS_SMART_PULLDOWN, 0, UserHandle.USER_CURRENT);
         }
    }
 
