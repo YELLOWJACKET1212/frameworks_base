@@ -414,16 +414,6 @@ public abstract class ConnectionService extends Service {
         }
 
         @Override
-        public void onConnectionPropertiesChanged(
-                Conference conference,
-                int connectionProperties) {
-            String id = mIdByConference.get(conference);
-            Log.d(this, "call properties: conference: %s",
-                    Connection.propertiesToString(connectionProperties));
-            mAdapter.setConnectionProperties(id, connectionProperties);
-        }
-
-        @Override
         public void onVideoStateChanged(Conference c, int videoState) {
             String id = mIdByConference.get(c);
             Log.d(this, "onVideoStateChanged set video state %d", videoState);
@@ -540,14 +530,6 @@ public abstract class ConnectionService extends Service {
         }
 
         @Override
-        public void onConnectionPropertiesChanged(Connection c, int properties) {
-            String id = mIdByConnection.get(c);
-            Log.d(this, "properties: parcelableconnection: %s",
-                    Connection.propertiesToString(properties));
-            mAdapter.setConnectionProperties(id, properties);
-        }
-
-        @Override
         public void onVideoProviderChanged(Connection c, Connection.VideoProvider videoProvider) {
             String id = mIdByConnection.get(c);
             Log.d(this, "onVideoProviderChanged: Connection: %s, VideoProvider: %s", c,
@@ -647,11 +629,10 @@ public abstract class ConnectionService extends Service {
 
         Uri address = connection.getAddress();
         String number = address == null ? "null" : address.getSchemeSpecificPart();
-        Log.v(this, "createConnection, number: %s, state: %s, capabilities: %s, properties: %s",
+        Log.v(this, "createConnection, number: %s, state: %s, capabilities: %s",
                 Connection.toLogSafePhoneNumber(number),
                 Connection.stateToString(connection.getState()),
-                Connection.capabilitiesToString(connection.getConnectionCapabilities()),
-                Connection.propertiesToString(connection.getConnectionProperties()));
+                Connection.capabilitiesToString(connection.getConnectionCapabilities()));
 
         Log.d(this, "createConnection, calling handleCreateConnectionSuccessful %s", callId);
         mAdapter.handleCreateConnectionComplete(
@@ -661,7 +642,6 @@ public abstract class ConnectionService extends Service {
                         request.getAccountHandle(),
                         connection.getState(),
                         connection.getConnectionCapabilities(),
-                        connection.getConnectionProperties(),
                         connection.getAddress(),
                         connection.getAddressPresentation(),
                         connection.getCallerDisplayName(),
@@ -954,7 +934,6 @@ public abstract class ConnectionService extends Service {
                     conference.getPhoneAccountHandle(),
                     conference.getState(),
                     conference.getConnectionCapabilities(),
-                    conference.getConnectionProperties(),
                     connectionIds,
                     conference.getVideoProvider() == null ?
                             null : conference.getVideoProvider().getInterface(),
@@ -995,7 +974,6 @@ public abstract class ConnectionService extends Service {
                     phoneAccountHandle,
                     connection.getState(),
                     connection.getConnectionCapabilities(),
-                    connection.getConnectionProperties(),
                     connection.getAddress(),
                     connection.getAddressPresentation(),
                     connection.getCallerDisplayName(),
