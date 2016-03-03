@@ -3847,6 +3847,15 @@ public final class Settings {
          */
         public static final String APP_SWITCH_WAKE_SCREEN = "app_switch_wake_screen";
 
+        /**
+         * Whether to swap app switch button with back button, the value is boolean.
+         * @hide
+         */
+        public static final String APP_SWITCH_SWAP_BUTTONS = "app_switch_swap_buttons";
+
+        /** @hide */
+        public static final Validator APP_SWITCH_SWAP_BUTTONS_VALIDATOR =
+                sBooleanValidator;
 
         /**
          * Volume rocker wake
