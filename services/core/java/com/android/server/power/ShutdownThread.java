@@ -287,6 +287,8 @@ public final class ShutdownThread extends Thread {
         return Settings.Secure.getInt(context.getContentResolver(),
                 Settings.Secure.ADVANCED_REBOOT, 1);
 
+    }
+
     private static int getPowermenuAnimations(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
                 Settings.System.POWER_MENU_ANIMATIONS, 0);
