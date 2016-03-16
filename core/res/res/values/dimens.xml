@@ -401,4 +401,13 @@
 
     <item type="dimen" format="integer" name="time_picker_column_start_material">0</item>
     <item type="dimen" format="integer" name="time_picker_column_end_material">1</item>
+
+    <!-- Dexopting screen -->
+    <dimen name="dexopt_icon_margin">6dp</dimen>
+    <dimen name="dexopt_icon_size">40dp</dimen>
+    <dimen name="dexopt_logo_size">244dp</dimen>
+    <dimen name="dexopt_margin">10dp</dimen>
+    <dimen name="dexopt_logo_margin_top">90dp</dimen>
+    <dimen name="dexopt_shadow_margin_top">100dp</dimen>
+
 </resources>
