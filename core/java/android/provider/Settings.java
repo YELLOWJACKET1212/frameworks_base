@@ -4843,6 +4843,11 @@ public final class Settings {
          */
         public static final String SETTINGS_CATEGORY_TEXT_SIZE = "settings_category_text_size";
 
+       /**
+        * USB Data automatic unlock
+        */
+       public static final String USB_DATA_AUTO_UNLOCK = "usb_data_auto_unlock";
+
         /**
          * Settings Dash Font Style
          * @hide
