@@ -26,15 +26,12 @@ LOCAL_PACKAGE_NAME := MultiDexLegacyTestServices
 
 LOCAL_STATIC_JAVA_LIBRARIES := android-support-multidex
 
-mainDexList:= \
-	$(call intermediates-dir-for,APPS,$(LOCAL_PACKAGE_NAME),$(LOCAL_IS_HOST_MODULE),common)/maindex.list
-
-LOCAL_DX_FLAGS := --multi-dex --main-dex-list=$(mainDexList) --minimal-main-dex
 LOCAL_JACK_FLAGS := -D jack.dex.output.policy=minimal-multidex -D jack.dex.output.multidex.legacy=true
 
 LOCAL_DEX_PREOPT := false
 
 include $(BUILD_PACKAGE)
+<<<<<<< HEAD
 
 ifndef LOCAL_JACK_ENABLED
 $(mainDexList): $(full_classes_proguard_jar) | $(HOST_OUT_EXECUTABLES)/mainDexClasses
@@ -43,3 +40,5 @@ $(mainDexList): $(full_classes_proguard_jar) | $(HOST_OUT_EXECUTABLES)/mainDexCl
 
 $(built_dex_intermediate): $(mainDexList)
 endif
+=======
+>>>>>>> ba068f4... Remove support of disabling Jack.
