@@ -2647,7 +2647,6 @@ public class SyncManager {
                         }
                         continue;
                     }
-
                     // Add this sync to be run.
                     operations.add(op);
                 }
