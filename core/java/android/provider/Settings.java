@@ -4840,6 +4840,20 @@ public final class Settings {
          */
         public static final String ANIMATION_IME_INTERPOLATOR = "animation_ime_interpolator";
 
+		/**
+         * Change quick settings tiles animation style
+         *
+         * @hide
+         */
+        public static final String ANIM_TILE_STYLE = "anim_tile_style";
+
+		/**
+         * Change quick settings tiles animation duration
+         *
+         * @hide
+         */
+        public static final String ANIM_TILE_DURATION = "anim_tile_duration";
+
         /**
          * header image package to use for daylight header - package name - null if default
          * @hide
