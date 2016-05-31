@@ -222,14 +222,6 @@ bool AssetManager::addAssetPath(const String8& path, int32_t* cookie)
     }
     delete manifestAsset;
 
-<<<<<<< HEAD
-    mAssetPaths.add(ap);
-
-    if (mResources != NULL) {
-        size_t index = mAssetPaths.size() - 1;
-        appendPathToResTable(ap, &index);
-    }
-
     const ssize_t index = mAssetPaths.add(ap, cookie);
     ap = mAssetPaths.itemAt(index); // get updated version of asset_path
 
@@ -300,8 +292,7 @@ bool AssetManager::addOverlayPath(const String8& packagePath, int32_t* cookie)
     oap = mAssetPaths.itemAt(index); // get updated version of asset_path
 
     if (mResources != NULL) {
-        size_t index = mAssetPaths.size() - 1;
-        appendPathToResTable(oap, &index);
+        appendPathToResTable(oap);
     }
 
     return true;
@@ -638,23 +629,24 @@ FileType AssetManager::getFileType(const char* fileName)
         return kFileTypeRegular;
 }
 
-bool AssetManager::appendPathToResTable(const asset_path& ap, size_t* entryIdx) const {
+bool AssetManager::appendPathToResTable(const asset_path& ap) const {
     Asset* ass = NULL;
     ResTable* sharedRes = NULL;
     bool shared = true;
     bool onlyEmptyResources = true;
     MY_TRACE_BEGIN(ap.path.string());
     Asset* idmap = openIdmapLocked(ap);
+    size_t nextEntryIdx = mResources->getTableCount();
     ALOGV("Looking for resource asset in '%s'\n", ap.path.string());
     if (ap.type != kFileTypeDirectory) {
-        if (*entryIdx == 0) {
+        if (nextEntryIdx == 0) {
             // The first item is typically the framework resources,
             // which we want to avoid parsing every time.
             sharedRes = const_cast<AssetManager*>(this)->
                 mZipSet.getZipResourceTable(ap.path);
             if (sharedRes != NULL) {
                 // skip ahead the number of system overlay packages preloaded
-                *entryIdx += sharedRes->getTableCount() - 1;
+                nextEntryIdx = sharedRes->getTableCount();
             }
         }
         if (sharedRes == NULL) {
@@ -672,7 +664,7 @@ bool AssetManager::appendPathToResTable(const asset_path& ap, size_t* entryIdx) 
                 }
             }
             
-            if (*entryIdx == 0 && ass != NULL) {
+            if (nextEntryIdx == 0 && ass != NULL) {
                 // If this is the first resource table in the asset
                 // manager, then we are going to cache it so that we
                 // can quickly copy it out for others.
@@ -708,7 +700,7 @@ bool AssetManager::appendPathToResTable(const asset_path& ap, size_t* entryIdx) 
         }
     } else {
         ALOGV("Installing empty resources in to table %p\n", mResources);
-        mResources->addEmpty(*entryIdx + 1);
+        mResources->addEmpty(nextEntryIdx + 1);
     }
 
     if (idmap != NULL) {
@@ -748,7 +740,7 @@ const ResTable* AssetManager::getResTable(bool required) const
     bool onlyEmptyResources = true;
     const size_t N = mAssetPaths.size();
     for (size_t i=0; i<N; i++) {
-        bool empty = appendPathToResTable(mAssetPaths.itemAt(i), &i);
+        bool empty = appendPathToResTable(mAssetPaths.itemAt(i));
         onlyEmptyResources = onlyEmptyResources && empty;
     }
 
