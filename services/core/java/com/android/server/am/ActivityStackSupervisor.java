@@ -3869,7 +3869,9 @@ public final class ActivityStackSupervisor implements DisplayListener {
     }
 
     void showLockTaskToast() {
-        mLockTaskNotify.showToast(mLockTaskModeState);
+        if (mLockTaskNotify != null) {
+            mLockTaskNotify.showToast(mLockTaskModeState);
+        }
     }
 
     void showLockTaskEscapeMessageLocked(TaskRecord task) {
