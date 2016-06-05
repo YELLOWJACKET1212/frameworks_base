@@ -179,9 +179,9 @@
 
     <!-- Dexopt dialog -->
     <color name="dexopt_background">#ff212121</color>
-    <color name="dexopt_primary_text">#ffffffff</color>
+    <color name="dexopt_primary_text">#ff33b5e5</color>
     <color name="dexopt_secondary_text">#b3ffffff</color>
-    <color name="dexopt_progress_tint">#ff6a1212</color>
-    <color name="dexopt_circle_color">#cc121212</color>
+    <color name="dexopt_progress_tint">#ff33b5e5</color>
+    <color name="dexopt_circle_color">#cc33b5e5</color>
 
 </resources>
