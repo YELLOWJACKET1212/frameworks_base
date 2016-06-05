@@ -48,6 +48,7 @@ import android.provider.Settings;
 import android.system.ErrnoException;
 import android.system.Os;
 
+import com.android.internal.util.krexus.ThemeUtils;
 import com.android.internal.telephony.ITelephony;
 import com.android.internal.util.alliance.ShutdownDialog;
 import com.android.server.pm.PackageManagerService;
@@ -137,7 +138,7 @@ public final class ShutdownThread extends Thread {
     public static void shutdown(final Context context, boolean confirm) {
         mReboot = false;
         mRebootSafeMode = false;
-        shutdownInner(context, confirm);
+        shutdownInner(getUiContext(context), confirm);
     }
 
     static void shutdownInner(final Context context, boolean confirm) {
@@ -180,6 +181,7 @@ public final class ShutdownThread extends Thread {
 
         if (confirm) {
             final CloseDialogReceiver closer = new CloseDialogReceiver(context);
+            final Context mUiContext = getUiContext(context);
             if (sConfirmDialog != null) {
                 sConfirmDialog.dismiss();
                 sConfirmDialog = null;
@@ -237,7 +239,7 @@ public final class ShutdownThread extends Thread {
             }
 
             if (sConfirmDialog == null) {
-                sConfirmDialog = new AlertDialog.Builder(context, com.android.internal.R.style.Theme_Material_DayNight_Dialog_Alert)
+                sConfirmDialog = new AlertDialog.Builder(mUiContext, com.android.internal.R.style.Theme_Material_DayNight_Dialog_Alert)
                         .setTitle(titleResourceId)
                         .setMessage(resourceId)
                         .setPositiveButton(com.android.internal.R.string.yes,
@@ -366,7 +368,7 @@ public final class ShutdownThread extends Thread {
         mRebootSafeMode = false;
         mRebootUpdate = false;
         mRebootReason = reason;
-        shutdownInner(context, confirm);
+        shutdownInner(getUiContext(context), confirm);
     }
 
     /**
@@ -913,5 +915,11 @@ public final class ShutdownThread extends Thread {
             Log.w(TAG, "Timed out waiting for uncrypt.");
         }
     }
-}
 
+    private static Context getUiContext(Context context) {
+        Context mUiContext = null;
+        mUiContext = ThemeUtils.createUiContext(context);
+        mUiContext.setTheme(android.R.style.Theme_DeviceDefault_Light_DarkActionBar);
+        return mUiContext != null ? mUiContext : context;
+    }
+}
