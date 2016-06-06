@@ -434,6 +434,7 @@ public class PackageParser {
         pi.restrictedAccountType = p.mRestrictedAccountType;
         pi.requiredAccountType = p.mRequiredAccountType;
         pi.overlayTarget = p.mOverlayTarget;
+        pi.requestedOverlayPriority = p.mOverlayPriority;
         pi.firstInstallTime = firstInstallTime;
         pi.lastUpdateTime = lastUpdateTime;
         if ((flags&PackageManager.GET_GIDS) != 0) {
@@ -613,7 +614,6 @@ public class PackageParser {
     public final static int PARSE_IS_SYSTEM_DIR = 1<<6;
     public final static int PARSE_IS_PRIVILEGED = 1<<7;
     public final static int PARSE_COLLECT_CERTIFICATES = 1<<8;
-    public final static int PARSE_TRUSTED_OVERLAY = 1<<9;
 
     private static final Comparator<String> sSplitNameComparator = new SplitNameComparator();
 
@@ -1353,8 +1353,6 @@ public class PackageParser {
      */
     private Package parseBaseApk(Resources res, XmlResourceParser parser, int flags,
             String[] outError) throws XmlPullParserException, IOException {
-        final boolean trustedOverlay = (flags & PARSE_TRUSTED_OVERLAY) != 0;
-
         AttributeSet attrs = parser;
 
         mParseInstrumentationArgs = null;
@@ -1463,8 +1461,6 @@ public class PackageParser {
                     return null;
                 }
             } else if (tagName.equals("overlay")) {
-                pkg.mTrustedOverlay = trustedOverlay;
-
                 sa = res.obtainAttributes(attrs,
                         com.android.internal.R.styleable.AndroidManifestResourceOverlay);
                 pkg.mOverlayTarget = sa.getString(
@@ -1479,12 +1475,7 @@ public class PackageParser {
                     mParseError = PackageManager.INSTALL_PARSE_FAILED_MANIFEST_MALFORMED;
                     return null;
                 }
-                if (pkg.mOverlayPriority < 0 || pkg.mOverlayPriority > 9999) {
-                    outError[0] = "<overlay> priority must be between 0 and 9999";
-                    mParseError =
-                        PackageManager.INSTALL_PARSE_FAILED_MANIFEST_MALFORMED;
-                    return null;
-                }
+
                 XmlUtils.skipCurrentTag(parser);
 
             } else if (tagName.equals("key-sets")) {
@@ -4385,7 +4376,6 @@ public class PackageParser {
 
         public String mOverlayTarget;
         public int mOverlayPriority;
-        public boolean mTrustedOverlay;
 
         /**
          * Data used to feed the KeySetManagerService
