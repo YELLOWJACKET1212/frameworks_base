@@ -184,8 +184,4 @@
     <color name="dexopt_progress_tint">#ff33b5e5</color>
     <color name="dexopt_circle_color">#cc33b5e5</color>
 
-    <!-- Shutdown/reboot dialog -->
-    <color name="shutdown_background">#ff212121</color>
-    <color name="shutdown_primary_text">#ff33b5e5</color>
-
 </resources>
