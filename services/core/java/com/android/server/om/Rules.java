@@ -120,9 +120,25 @@ class Rules {
             return STATE_APPROVED_DISABLED;
         }
 
-        // Technically, we could approve and use the overlay, but the target
-        // hasn't granted every resource it touches. Let's not approve it.
-        return STATE_APPROVED_DISABLED;
+        // At this point, we ran through all the above tests and will go to the
+        // default return value, however, instead of just returning a default
+        // STATE_APPROVED_DISABLED value, we should check whether it is enabled
+        // in overlays.list instead.
+
+        try {
+            switch (overlay.state) {
+                case STATE_APPROVED_DISABLED:
+                    return STATE_APPROVED_DISABLED;
+                case STATE_APPROVED_ENABLED;
+                    return STATE_APPROVED_ENABLED;
+                default:
+                    return STATE_APPROVED_DISABLED;
+            }        
+        } catch (Exception e) {
+            // At this point, we can safely assume that overlay is null and we
+            // should just return STATE_APPROVED_DISABLED, like default.
+            return STATE_APPROVED_DISABLED;
+        }
     }
 
     /**
