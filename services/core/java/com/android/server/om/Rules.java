@@ -95,8 +95,31 @@ class Rules {
         }
 
         // The target package is not installed
+        //
+        // @nicholaschum: Add cases where the target was removed during an app
+        // update, and thus should only be in state 2 if and only if it was a
+        // full uninstall.
+        // 
+        // If the user installs a big app like Facebook or Google+, we should
+        // take account for the install time, so 10,000ms == 10secs.
         if (getPackage(overlayPackage.overlayTarget, userId) == null) {
-            return STATE_NOT_APPROVED_MISSING_TARGET;
+            try {
+                Thread.sleep(10000);
+                if (getPackage(overlayPackage.overlayTarget, userId) == null) {
+                    return STATE_NOT_APPROVED_MISSING_TARGET;
+                } else {
+                    switch (overlay.state) {
+                        case STATE_APPROVED_DISABLED:
+                            return STATE_APPROVED_DISABLED;
+                        case STATE_APPROVED_ENABLED;
+                            return STATE_APPROVED_ENABLED;
+                        default:
+                            return STATE_APPROVED_DISABLED;
+                    }        
+                }
+            } catch (InterruptedException ie) {
+                return STATE_NOT_APPROVED_MISSING_TARGET;
+            }
         }
 
         // No idmap has been created. Perhaps there were no matching resources
