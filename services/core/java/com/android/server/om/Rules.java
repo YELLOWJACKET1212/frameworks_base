@@ -109,11 +109,6 @@ class Rules {
             return STATE_APPROVED_ALWAYS_ENABLED;
         }
 
-        // If the target and overlay have the same author, we approve it.
-        if (isSignatureMatching(overlayPackage)) {
-            return STATE_APPROVED_DISABLED;
-        }
-
         // If the overlay only modifies resources explicitly granted by the
         // target, we approve it.
         if (!mIdmapManager.isDangerous(overlayPackage)) {
@@ -209,22 +204,6 @@ class Rules {
             // Intentionally left blank
         }
         return null;
-    }
-
-    /**
-     * Check if the signature of the overlay package matches the signature of the target package.
-     *
-     * @param overlay
-     * @return true if the signature match the target package
-     */
-    private boolean isSignatureMatching(PackageInfo overlay) {
-        try {
-            return mPm.checkSignatures(overlay.overlayTarget,
-                    overlay.packageName) == SIGNATURE_MATCH;
-        } catch (RemoteException e) {
-            // Intentionally left blank
-        }
-        return true;
     }
 
     /**
