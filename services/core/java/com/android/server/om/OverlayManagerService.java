@@ -145,7 +145,7 @@ public class OverlayManagerService extends SystemService {
 
     static final String TAG = "OverlayManager";
 
-    static final boolean DEBUG = false;
+    static final boolean DEBUG = true;
 
     private final IPackageManager mPm;
 
@@ -193,13 +193,33 @@ public class OverlayManagerService extends SystemService {
             getContext().registerReceiverAsUser(new PackageReceiver(), UserHandle.ALL,
                     packageFilter, null, null);
 
+            if (DEBUG) {
+                Slog.d(TAG, "restoreState() running");
+            }
             restoreState();
+            if (DEBUG) {
+                Slog.d(TAG, "restoreState() in onBootPhase already ran!");
+            }
+            if (DEBUG) {
+                Slog.d(TAG, "updateOverlayState() running");
+            }
             updateOverlayState(USER_OWNER);
+            if (DEBUG) {
+                Slog.d(TAG, "updateOverlayState() in onBootPhase already ran!");
+            }
             updateAssets(USER_OWNER, mState.getAllTargets(USER_OWNER));
 
             // Loading overlay packages from the package manager might update the
             // state of overlays. Persist any changes
+
+            // @TODO: Check whether this is causing all packages to be reinstalled?
+            if (DEBUG) {
+                Slog.d(TAG, "persistState() running");
+            }
             persistState();
+            if (DEBUG) {
+                Slog.d(TAG, "persistState() in onBootPhase already ran!");
+            }
 
             // The initial setup of our state is complete, we should be able to
             // handle all future changes in the callback
@@ -267,6 +287,9 @@ public class OverlayManagerService extends SystemService {
     }
 
     private boolean isOverlayPackage(PackageInfo pi) {
+        if (DEBUG) {
+            Slog.d(TAG, "Checking packages through isOverlayPackage()");
+        }
         return pi != null && pi.overlayTarget != null;
     }
 
@@ -296,6 +319,9 @@ public class OverlayManagerService extends SystemService {
      * @param userId
      */
     private void updateOverlayInfo(PackageInfo overlayPackage, int userId) {
+        if (DEBUG) {
+            Slog.d(TAG, "Updating all overlay information");
+        }
         if (overlayPackage == null) {
             return;
         }
@@ -323,6 +349,9 @@ public class OverlayManagerService extends SystemService {
      *            old package with a new version.
      */
     private void removeOverlayInfo(OverlayInfo oi, boolean replacing) {
+        if (DEBUG) {
+            Slog.d(TAG, "Removing all overlay information");
+        }
         if (mState.removeOverlay(oi.packageName, oi.userId)) {
             if (replacing) {
                 mPendingUpgrades.put(oi.packageName, oi);
@@ -334,6 +363,9 @@ public class OverlayManagerService extends SystemService {
     }
 
     private void updateOverlayInfos(String targetPackageName, int userId) {
+        if (DEBUG) {
+            Slog.d(TAG, "Updating all overlay information");
+        }
         PackageInfo targetPackage = getPackageInfo(targetPackageName, userId);
         List<OverlayInfo> overlays = mState.getOverlays(targetPackageName, false, userId);
         for (OverlayInfo overlayInfo : overlays) {
@@ -381,6 +413,9 @@ public class OverlayManagerService extends SystemService {
      * Persist our current state to overlays.xml.
      */
     private void persistState() {
+        if (DEBUG) {
+            Slog.d(TAG, "Persisting our current state to overlays.xml.");
+        }
         IoThread.getHandler().post(new Runnable() {
             @Override
             public void run() {
@@ -403,7 +438,7 @@ public class OverlayManagerService extends SystemService {
      */
     private void restoreState() {
         if (DEBUG) {
-            Slog.d(TAG, "Restore overlay state");
+            Slog.d(TAG, "Restoring overlay state from overlays.xml.");
         }
         synchronized (mStateFile) {
             if (!mStateFile.getBaseFile().exists()) {
