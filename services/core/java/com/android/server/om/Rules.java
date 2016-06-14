@@ -111,7 +111,7 @@ class Rules {
                     switch (overlay.state) {
                         case STATE_APPROVED_DISABLED:
                             return STATE_APPROVED_DISABLED;
-                        case STATE_APPROVED_ENABLED;
+                        case STATE_APPROVED_ENABLED:
                             return STATE_APPROVED_ENABLED;
                         default:
                             return STATE_APPROVED_DISABLED;
@@ -147,7 +147,7 @@ class Rules {
             switch (overlay.state) {
                 case STATE_APPROVED_DISABLED:
                     return STATE_APPROVED_DISABLED;
-                case STATE_APPROVED_ENABLED;
+                case STATE_APPROVED_ENABLED:
                     return STATE_APPROVED_ENABLED;
                 default:
                     return STATE_APPROVED_DISABLED;
