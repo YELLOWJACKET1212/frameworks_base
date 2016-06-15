@@ -147,7 +147,6 @@ class Rules {
         // default return value, however, instead of just returning a default
         // STATE_APPROVED_DISABLED value, we should check whether it is enabled
         // in overlays.list instead.
-
         try {
             switch (overlay.state) {
                 case STATE_APPROVED_DISABLED:
@@ -159,8 +158,9 @@ class Rules {
             }        
         } catch (Exception e) {
             // At this point, we can safely assume that overlay is null and we
-            // should just return STATE_APPROVED_DISABLED, like default.
-            return STATE_APPROVED_DISABLED;
+            // should just return STATE_NOT_APPROVED_DANGEROUS_OVERLAY, like
+            // Sony default.
+            return STATE_NOT_APPROVED_DANGEROUS_OVERLAY;
         }
     }
 
