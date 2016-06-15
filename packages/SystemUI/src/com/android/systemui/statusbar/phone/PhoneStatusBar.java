@@ -1338,7 +1338,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // For small-screen devices (read: phones) that lack hardware navigation buttons
     private void addNavigationBar() {
         if (DEBUG) Log.v(TAG, "addNavigationBar: about to add " + mNavigationBarView);
-        if (mNavigationBarView && !mRecreating) return;
+        if (mNavigationBarView == null) return;
 
         prepareNavigationBarView();
 
