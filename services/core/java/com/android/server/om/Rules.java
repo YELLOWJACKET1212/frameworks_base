@@ -128,8 +128,13 @@ class Rules {
             return STATE_NOT_APPROVED_NO_IDMAP;
         }
 
+        // System Overlays, also known as RRO overlay files, work the same
+        // as OMS, but with enable/disable limitations. A system overlay resides
+        // in the directory "/vendor/overlay" depending on your device. Disable
+        // this as this is a security vulnerability and a memory-specific
+        // partition.
         if (isSystem(overlayPackage)) {
-            return STATE_APPROVED_ALWAYS_ENABLED;
+            return STATE_NOT_APPROVED_COMPONENT_DISABLED;
         }
 
         // If the overlay only modifies resources explicitly granted by the
