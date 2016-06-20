@@ -36,18 +36,6 @@ LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/test.jpp
 
 include $(BUILD_PACKAGE)
 
-<<<<<<< HEAD
-ifndef LOCAL_JACK_ENABLED
-$(mainDexList): $(full_classes_proguard_jar) | $(HOST_OUT_EXECUTABLES)/mainDexClasses
-	$(hide) mkdir -p $(dir $@)
-	$(HOST_OUT_EXECUTABLES)/mainDexClasses $< 1>$@
-	echo "com/android/multidexlegacytestapp/Test.class" >> $@
-
-$(built_dex_intermediate): $(mainDexList)
-endif
-
-=======
->>>>>>> ba068f4... Remove support of disabling Jack.
 ## The application with a full main dex
 include $(CLEAR_VARS)
 
@@ -69,15 +57,3 @@ LOCAL_JACK_FLAGS := -D jack.dex.output.policy=multidex -D jack.preprocessor=true
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/test.jpp
 
 include $(BUILD_PACKAGE)
-<<<<<<< HEAD
-
-ifndef LOCAL_JACK_ENABLED
-$(mainDexList2): $(full_classes_proguard_jar) | $(HOST_OUT_EXECUTABLES)/mainDexClasses
-	$(hide) mkdir -p $(dir $@)
-	$(HOST_OUT_EXECUTABLES)/mainDexClasses $< 1>$@
-	echo "com/android/multidexlegacytestapp/Test.class" >> $@
-
-$(built_dex_intermediate): $(mainDexList2)
-endif
-=======
->>>>>>> ba068f4... Remove support of disabling Jack.
