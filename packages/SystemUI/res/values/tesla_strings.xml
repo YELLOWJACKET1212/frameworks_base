@@ -149,7 +149,9 @@
     <string name="quick_settings_expanded_desktop">Expanded</string>
     <string name="quick_settings_expanded_desktop_off">Normal</string>
 
-    <string name="quick_settings_layers_manager_label">Layers</string>
+    <!-- Substratum QS Tile -->
+    <string name="quick_settings_substratum_label">Substratum</string>
+    <string name="accessibility_quick_settings_substratum">Substratum.</string>
 
     <!-- Content description of the Layers Manager tile in quick settings (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_quick_settings_layers_manager">Layers.</string>
