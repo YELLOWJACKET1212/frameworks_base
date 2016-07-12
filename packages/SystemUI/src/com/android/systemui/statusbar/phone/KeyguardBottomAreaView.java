@@ -776,6 +776,14 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mAccessibilityController.removeStateChangedCallback(this);
+        mContext.unregisterReceiver(mDevicePolicyReceiver);
+        mUnlockMethodCache.removeListener(this);
+    }
+
     private String getIndexHint(LockscreenShortcutsHelper.Shortcuts shortcut) {
         if (mShortcutHelper.isTargetCustom(shortcut)) {
             boolean isRtl = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
