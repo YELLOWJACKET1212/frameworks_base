@@ -401,6 +401,10 @@ public class NavigationBarView extends LinearLayout {
         mHomeLandIcon = mHomeIcon;
     }
 
+    public void updateResources() {
+        getIcons(getContext().getResources());
+    }
+
     @Override
     public void setLayoutDirection(int layoutDirection) {
         getIcons(getContext().getResources());
