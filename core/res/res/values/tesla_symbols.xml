@@ -199,10 +199,4 @@
   <java-symbol type="id" name="shutdown_logo_shadow" />
   <java-symbol type="id" name="shutdown_message" />
 
-   <!-- Proximity check on screen on -->
-   <java-symbol type="bool" name="config_proximityCheckOnWake" />
- 
-   <!-- Proximity check timeout on screen on -->
-   <java-symbol type="integer" name="config_proximityCheckTimeout" />
-
 </resources>
