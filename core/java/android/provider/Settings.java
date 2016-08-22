@@ -4528,7 +4528,13 @@ public final class Settings {
         public static final String WHITELIST_APP_CIRCLE_BAR = "whitelist_app_circle_bar";
 
         /**
-         * Config for advanced pa pie 2.0
+         * Whether to show the negociated charger current in the lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_CHARGING_CURRENT = "lockscreen_charging_current";
+
+        /**
+	 * Config for advanced pa pie 2.0
          *
          * @hide
          */
