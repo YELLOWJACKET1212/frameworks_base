@@ -73,6 +73,10 @@ public class AppOpsManager {
      * will do this for you).
      */
 
+    /** {@hide */
+    public static final String ACTION_SU_SESSION_CHANGED =
+            "android.intent.action.SU_SESSION_CHANGED";
+
     final Context mContext;
     final IAppOpsService mService;
     final ArrayMap<OnOpChangedListener, IAppOpsCallback> mModeWatchers
@@ -261,7 +265,9 @@ public class AppOpsManager {
     /** @hide */
     public static final int OP_DATA_CONNECT_CHANGE = 67;
     /** @hide */
-    public static final int _NUM_OP = 68;
+    public static final int OP_SU = 68;
+    /** @hide */
+    public static final int _NUM_OP = 69;
 
     /** Access to coarse location information. */
     public static final String OPSTR_COARSE_LOCATION = "android:coarse_location";
@@ -370,6 +376,8 @@ public class AppOpsManager {
             "android:nfc_change";
     private static final String OPSTR_DATA_CONNECT_CHANGE =
             "android:data_connect_change";
+    private static final String OPSTR_SU =
+            "android:su";
 
     /**
      * This maps each operation to the operation that serves as the
@@ -448,6 +456,7 @@ public class AppOpsManager {
             OP_BOOT_COMPLETED,
             OP_NFC_CHANGE,
             OP_DATA_CONNECT_CHANGE,
+            OP_SU
     };
 
     /**
@@ -523,6 +532,7 @@ public class AppOpsManager {
             OPSTR_BOOT_COMPLETED,
             OPSTR_NFC_CHANGE,
             OPSTR_DATA_CONNECT_CHANGE,
+            OPSTR_SU,
     };
 
     /**
@@ -598,6 +608,7 @@ public class AppOpsManager {
             "BOOT_COMPLETED",
             "NFC_CHANGE",
             "DATA_CONNECT_CHANGE",
+            "SU",
     };
 
     /**
@@ -673,6 +684,7 @@ public class AppOpsManager {
             Manifest.permission.RECEIVE_BOOT_COMPLETED,
             Manifest.permission.NFC,
             Manifest.permission.MODIFY_PHONE_STATE,
+            null,
     };
 
     /**
@@ -749,6 +761,7 @@ public class AppOpsManager {
             null, //BOOT_COMPLETED
             null, //NFC_CHANGE
             null, //DATA_CONNECT_CHANGE
+            UserManager.DISALLOW_SU, //SU TODO: this should really be investigated.
     };
 
     /**
@@ -824,6 +837,7 @@ public class AppOpsManager {
             true, // BOOT_COMPLETED
             true, // NFC_CHANGE
             true, //DATA_CONNECT_CHANGE
+            false, //SU
     };
 
     /**
@@ -894,10 +908,11 @@ public class AppOpsManager {
             AppOpsManager.MODE_ALLOWED,  // OP_TURN_ON_SCREEN
             AppOpsManager.MODE_ALLOWED,
             AppOpsManager.MODE_ALLOWED, // OP_WIFI_CHANGE
-            AppOpsManager.MODE_ALLOWED,     // OP_BLUETOOTH_CHANGE
+            AppOpsManager.MODE_ALLOWED, // OP_BLUETOOTH_CHANGE
             AppOpsManager.MODE_ALLOWED, // OP_BOOT_COMPLETED
             AppOpsManager.MODE_ALLOWED, // OP_NFC_CHANGE
             AppOpsManager.MODE_ALLOWED,
+            AppOpsManager.MODE_ASK, // OP_SU
     };
 
     /**
@@ -973,6 +988,7 @@ public class AppOpsManager {
             AppOpsManager.MODE_ALLOWED, // OP_BOOT_COMPLETED
             AppOpsManager.MODE_ASK,     // OP_NFC_CHANGE
             AppOpsManager.MODE_ASK,     // OP_DATA_CONNECT_CHANGE
+            AppOpsManager.MODE_ASK,     // OP_SU
     };
 
     /**
@@ -1047,6 +1063,7 @@ public class AppOpsManager {
         false,    // OP_BOOT_COMPLETED
         true,     // OP_NFC_CHANGE
         true,     // OP_DATA_CONNECT_CHANGE
+        true,     // OP_SU
     };
 
     /**
@@ -1125,6 +1142,7 @@ public class AppOpsManager {
             false,     // OP_BOOT_COMPLETED
             false,     // OP_NFC_CHANGE
             false,     // OP_DATA_CONNECT_CHANGE
+            false,     // OP_SU
     };
 
     /**
@@ -1346,9 +1364,16 @@ public class AppOpsManager {
         private final int mDuration;
         private final int mProxyUid;
         private final String mProxyPackageName;
+        private final int mAllowedCount;
+        private final int mIgnoredCount;
 
         public OpEntry(int op, int mode, long time, long rejectTime, int duration,
-                int proxyUid, String proxyPackage) {
+                       int proxyUid, String proxyPackage) {
+            this(op, mode, time, rejectTime, duration, proxyUid, proxyPackage, 0, 0);
+        }
+
+        public OpEntry(int op, int mode, long time, long rejectTime, int duration,
+                       int proxyUid, String proxyPackage, int allowedCount, int ignoredCount) {
             mOp = op;
             mMode = mode;
             mTime = time;
@@ -1356,6 +1381,8 @@ public class AppOpsManager {
             mDuration = duration;
             mProxyUid = proxyUid;
             mProxyPackageName = proxyPackage;
+            mAllowedCount = allowedCount;
+            mIgnoredCount = ignoredCount;
         }
 
         public int getOp() {
@@ -1390,6 +1417,14 @@ public class AppOpsManager {
             return mProxyPackageName;
         }
 
+        public int getAllowedCount() {
+            return mAllowedCount;
+        }
+
+        public int getIgnoredCount() {
+            return mIgnoredCount;
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -1404,6 +1439,8 @@ public class AppOpsManager {
             dest.writeInt(mDuration);
             dest.writeInt(mProxyUid);
             dest.writeString(mProxyPackageName);
+            dest.writeInt(mAllowedCount);
+            dest.writeInt(mIgnoredCount);
         }
 
         OpEntry(Parcel source) {
@@ -1414,6 +1451,8 @@ public class AppOpsManager {
             mDuration = source.readInt();
             mProxyUid = source.readInt();
             mProxyPackageName = source.readString();
+            mAllowedCount = source.readInt();
+            mIgnoredCount = source.readInt();
         }
 
         public static final Creator<OpEntry> CREATOR = new Creator<OpEntry>() {
@@ -2030,5 +2069,31 @@ public class AppOpsManager {
         } catch (RemoteException e) {
         }
         return isShow;
+    }
+
+    /** @hide */
+    public boolean getPrivacyGuardSettingForPackage(int uid, String packageName) {
+        try {
+            return mService.getPrivacyGuardSettingForPackage(uid, packageName);
+        } catch (RemoteException e) {
+        }
+        return false;
+    }
+
+    /** @hide */
+    public void setPrivacyGuardSettingForPackage(int uid, String packageName,
+            boolean state) {
+        try {
+            mService.setPrivacyGuardSettingForPackage(uid, packageName, state);
+        } catch (RemoteException e) {
+        }
+    }
+
+    /** @hide */
+    public void resetCounters() {
+        try {
+            mService.resetCounters();
+        } catch (RemoteException e) {
+        }
     }
 }

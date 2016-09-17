@@ -174,4 +174,6 @@
     <string name="quick_settings_navbar">NavBar</string>
     <string name="quick_settings_navbar_off">NavBar Disabled</string>
 
+    <!-- Content description of the superuser tile -->
+    <string name="accessibility_su_active">Superuser session active</string>
 </resources>
