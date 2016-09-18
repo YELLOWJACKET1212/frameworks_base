@@ -4305,10 +4305,9 @@ public class TelephonyManager {
             if (telephony != null)
                 telephony.setDataEnabled(subId, enable);
         } catch (RemoteException e) {
-            Log.e(TAG, "Error calling ITelephony#needsOtaServiceProvisioning", e);
+            Log.e(TAG, "Error calling needsOtaServiceProvisioning", e);
         } catch (NullPointerException npe) {
             Log.e(TAG, "Error calling ITelephony#needsOtaServiceProvisioning", npe);
-            Log.e(TAG, "Error calling setDataEnabled", e);
         }
     }
 
